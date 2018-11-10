@@ -1,6 +1,9 @@
 package org.hack.princeton.hack_princeton;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.DistanceMatrixApiRequest;
@@ -17,11 +20,12 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+    	
+    	String apiKey = getKey();
         
         try {
-			System.out.println(getWalkTime("api-key","Forbes College Princeton, NJ 08540", "65 Olden St, Princeton, NJ 08540"));
-			System.out.println(getBikeTime("api-key","Forbes College Princeton, NJ 08540", "65 Olden St, Princeton, NJ 08540"));
+			System.out.println(getWalkTime(apiKey,"Forbes College Princeton, NJ 08540", "65 Olden St, Princeton, NJ 08540"));
+			System.out.println(getBikeTime(apiKey,"Forbes College Princeton, NJ 08540", "65 Olden St, Princeton, NJ 08540"));
 		} catch (ApiException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -33,6 +37,31 @@ public class App
 			e.printStackTrace();
 		}
         
+    }
+    
+    public static String getKey() {
+    	Properties prop = new Properties();
+    	InputStream input = null;
+    	try {
+
+    		input = new FileInputStream("app.properties");
+
+    		// load a properties file
+    		prop.load(input);
+
+    	} catch (IOException ex) {
+    		ex.printStackTrace();
+    	} finally {
+    		if (input != null) {
+    			try {
+    				input.close();
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    	}
+    	// get the property value and return it
+		return prop.getProperty("api-key");
     }
     
     public static double getWalkTime(String apiKey, String addrOne, String addrTwo) throws ApiException, InterruptedException, IOException{
